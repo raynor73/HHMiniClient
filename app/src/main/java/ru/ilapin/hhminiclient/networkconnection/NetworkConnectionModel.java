@@ -1,5 +1,6 @@
 package ru.ilapin.hhminiclient.networkconnection;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
@@ -8,6 +9,8 @@ import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 import ru.ilapin.common.android.viewmodelprovider.ViewModel;
 
+import static com.google.common.base.Preconditions.*;
+
 public class NetworkConnectionModel implements ViewModel {
 
 	private final Context mContext;
@@ -15,6 +18,8 @@ public class NetworkConnectionModel implements ViewModel {
 	private final BehaviorSubject<Boolean> mConnectionObservable = BehaviorSubject.create();
 
 	public NetworkConnectionModel(final Context context) {
+		checkArgument(!(context instanceof Activity), "Do not pass Activity instance here!");
+
 		mContext = context;
 		mReceiver = new NetworkConnectionReceiver(this);
 		mConnectionObservable.onNext(false);

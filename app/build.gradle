@@ -46,4 +46,5 @@ dependencies {
 	androidTestCompile 'org.mockito:mockito-android:2.7.22'
 	annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 	annotationProcessor 'com.google.dagger:dagger-compiler:2.8'
+	compile 'com.squareup.retrofit2:retrofit:2.3.0'
 }
