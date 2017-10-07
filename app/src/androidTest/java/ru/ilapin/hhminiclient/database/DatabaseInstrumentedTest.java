@@ -29,12 +29,12 @@ public class DatabaseInstrumentedTest {
 		mDatabaseHelper.deleteAllVacancies();
 		assertTrue(mDatabaseHelper.queryVacancies().size() == 0);
 
-		final Vacancy foo = new Vacancy();
+		final DbVacancy foo = new DbVacancy();
 		foo.setId(1);
 		foo.setName("Вакансия 1");
 		foo.setPublishedAt(new Date());
 
-		final Vacancy bar = new Vacancy();
+		final DbVacancy bar = new DbVacancy();
 		bar.setId(2);
 		bar.setName("Вакансия 2");
 		bar.setPublishedAt(new Date());
@@ -50,12 +50,12 @@ public class DatabaseInstrumentedTest {
 		mDatabaseHelper.deleteAllVacancies();
 		assertTrue(mDatabaseHelper.queryVacancies().size() == 0);
 
-		final Vacancy foo = new Vacancy();
+		final DbVacancy foo = new DbVacancy();
 		foo.setId(1);
 		foo.setName("Вакансия 1");
 		foo.setPublishedAt(new Date());
 
-		final Vacancy bar = new Vacancy();
+		final DbVacancy bar = new DbVacancy();
 		bar.setId(2);
 		bar.setName("Вакансия 2");
 		bar.setPublishedAt(new Date());
@@ -79,19 +79,19 @@ public class DatabaseInstrumentedTest {
 		mDatabaseHelper.deleteAllVacancies();
 		assertTrue(mDatabaseHelper.queryVacancies().size() == 0);
 
-		final Vacancy foo = new Vacancy();
+		final DbVacancy foo = new DbVacancy();
 		foo.setId(1);
 		foo.setName("Вакансия 1");
 		foo.setPublishedAt(new Date());
 		mDatabaseHelper.createOrUpdateVacancy(foo);
 		assertTrue(mDatabaseHelper.queryVacancies().size() == 1);
 
-		final Vacancy testVacancy = mDatabaseHelper.queryVacancies().get(0);
+		final DbVacancy testVacancy = mDatabaseHelper.queryVacancies().get(0);
 		testVacancy.setName("Вакансия 2");
 		mDatabaseHelper.createOrUpdateVacancy(testVacancy);
 		assertTrue(mDatabaseHelper.queryVacancies().size() == 1);
 
-		final Vacancy testVacancy2 = mDatabaseHelper.queryVacancies().get(0);
+		final DbVacancy testVacancy2 = mDatabaseHelper.queryVacancies().get(0);
 		assertTrue(testVacancy2.getName().equals("Вакансия 2"));
 	}
 }

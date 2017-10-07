@@ -40,28 +40,28 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		}
 	}
 
-	public void createOrUpdateVacancy(final Vacancy vacancy) throws SQLException {
-		Dao<Vacancy, Integer> vacancyDao = getDao(Vacancy.class);
+	public void createOrUpdateVacancy(final DbVacancy vacancy) throws SQLException {
+		Dao<DbVacancy, Integer> vacancyDao = getDao(DbVacancy.class);
 		vacancyDao.createOrUpdate(vacancy);
 	}
 
 	public void deleteAllVacancies() throws SQLException {
-		Dao<Vacancy, Integer> vacancyDao = getDao(Vacancy.class);
+		Dao<DbVacancy, Integer> vacancyDao = getDao(DbVacancy.class);
 		vacancyDao.deleteBuilder().delete();
 	}
 
-	public List<Vacancy> queryVacancies() throws SQLException {
-		Dao<Vacancy, Integer> vacancyDao = getDao(Vacancy.class);
-		QueryBuilder<Vacancy, Integer> queryBuilder = vacancyDao.queryBuilder();
-		queryBuilder.orderBy(Vacancy.COLUMN_NAME_PUBLISHED_AT, false);
+	public List<DbVacancy> queryVacancies() throws SQLException {
+		Dao<DbVacancy, Integer> vacancyDao = getDao(DbVacancy.class);
+		QueryBuilder<DbVacancy, Integer> queryBuilder = vacancyDao.queryBuilder();
+		queryBuilder.orderBy(DbVacancy.COLUMN_NAME_PUBLISHED_AT, false);
 		return queryBuilder.query();
 	}
 
 	private void createTables(final ConnectionSource connectionSource) throws SQLException {
-		TableUtils.createTable(connectionSource, Vacancy.class);
+		TableUtils.createTable(connectionSource, DbVacancy.class);
 	}
 
 	private void dropTables(final ConnectionSource connectionSource) throws SQLException {
-		TableUtils.dropTable(connectionSource, Vacancy.class, true);
+		TableUtils.dropTable(connectionSource, DbVacancy.class, true);
 	}
 }

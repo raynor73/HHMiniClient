@@ -1,17 +1,13 @@
 package ru.ilapin.hhminiclient;
 
 import android.os.Bundle;
-import android.widget.TextView;
-import butterknife.BindView;
+
 import butterknife.ButterKnife;
 import io.reactivex.disposables.Disposable;
 import ru.ilapin.common.android.viewmodelprovider.ViewModelProviderActivity;
 import ru.ilapin.hhminiclient.networkconnection.NetworkConnectionModel;
 
 public class MainActivity extends ViewModelProviderActivity {
-
-	@BindView(R.id.connectivityTextView)
-	TextView mConnectivityTextView;
 
 	private NetworkConnectionModel mNetworkConnectionModel;
 
@@ -47,7 +43,7 @@ public class MainActivity extends ViewModelProviderActivity {
 
 	private void makeSubscriptions() {
 		mConnectionSubscription = mNetworkConnectionModel.getConnectionObservable().subscribe(isConnected -> {
-			mConnectivityTextView.setText(isConnected ? "Connected" : "Not connected");
+
 		});
 	}
 

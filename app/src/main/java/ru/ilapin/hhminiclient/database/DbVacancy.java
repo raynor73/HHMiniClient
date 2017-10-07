@@ -6,8 +6,8 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Date;
 
-@DatabaseTable(tableName = Vacancy.TABLE_NAME)
-public class Vacancy {
+@DatabaseTable(tableName = DbVacancy.TABLE_NAME)
+public class DbVacancy {
 
 	public static final String TABLE_NAME = "Vacancy";
 
