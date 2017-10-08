@@ -13,23 +13,52 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.BehaviorSubject;
 import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
+import ru.ilapin.common.android.busymodel.BusyModel;
 
-public class Backend {
+public class Backend extends BusyModel {
 
 	private static final String TAG = "Backend";
 
 	private static final String BASE_URL = "https://api.hh.ru/";
 
 	private final HHService mHHService;
+	private final BehaviorSubject<Result<List<BackendVacancy>>> mVacanciesSubject = BehaviorSubject.create();
 
 	public Backend() {
 		final Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).build();
 		mHHService = retrofit.create(HHService.class);
+		mVacanciesSubject.onNext(new Result<>(new ArrayList<>(), false));
 	}
 
-	public List<BackendVacancy> searchVacancies(final String keywords) throws IOException, JSONException {
+	public Observable<Result<List<BackendVacancy>>> getVacanciesObservable() {
+		return mVacanciesSubject;
+	}
+
+	public void searchVacancies(final String keywords) {
+		if (!isIdle()) {
+			Log.e(TAG, "Can't search vacancies while busy");
+			return;
+		}
+
+		setIdle(false);
+
+		Observable.<Result<List<BackendVacancy>>>create(subscriber -> subscriber.onNext(new Result<>(makeSearchVacanciesRequest(keywords), false)))
+				.onErrorReturn(throwable -> new Result<>(new ArrayList<>(), true))
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(result -> {
+					mVacanciesSubject.onNext(result);
+					setIdle(true);
+				});
+	}
+
+	private List<BackendVacancy> makeSearchVacanciesRequest(final String keywords) throws IOException, JSONException {
 		final ResponseBody vacanciesResponseBody = mHHService.vacancies(keywords).execute().body();
 		final List<BackendVacancy> vacancies = new ArrayList<>();
 

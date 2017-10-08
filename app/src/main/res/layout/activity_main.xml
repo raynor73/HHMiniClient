@@ -30,18 +30,17 @@
 		android:id="@+id/vacancyKeywords"
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
+		android:layout_marginBottom="0dp"
 		android:layout_marginLeft="8dp"
+		android:layout_marginRight="0dp"
 		android:layout_marginTop="0dp"
 		android:ems="10"
 		android:inputType="textPersonName"
-		android:text="Vacancy Keywords"
-		app:layout_constraintLeft_toLeftOf="parent"
-		app:layout_constraintTop_toTopOf="@+id/guideline"
-		tools:ignore="HardcodedText"
-		app:layout_constraintRight_toLeftOf="@+id/clearButton"
-		android:layout_marginRight="0dp"
 		app:layout_constraintBottom_toBottomOf="@+id/searchButton"
-		android:layout_marginBottom="0dp"/>
+		app:layout_constraintLeft_toLeftOf="parent"
+		app:layout_constraintRight_toLeftOf="@+id/clearButton"
+		app:layout_constraintTop_toTopOf="@+id/guideline"
+		tools:ignore="HardcodedText,RtlHardcoded"/>
 
 	<Button
 		android:id="@+id/searchButton"
@@ -51,7 +50,8 @@
 		android:layout_marginRight="8dp"
 		app:layout_constraintRight_toRightOf="parent"
 		app:layout_constraintTop_toTopOf="@+id/guideline"
-		android:layout_marginTop="0dp"/>
+		android:layout_marginTop="0dp"
+		tools:ignore="RtlHardcoded"/>
 
 	<Button
 		android:id="@+id/clearButton"
@@ -61,10 +61,11 @@
 		app:layout_constraintTop_toTopOf="@+id/guideline"
 		android:layout_marginTop="0dp"
 		app:layout_constraintRight_toLeftOf="@+id/searchButton"
-		android:layout_marginRight="0dp"/>
+		android:layout_marginRight="0dp"
+		tools:ignore="RtlHardcoded"/>
 
 	<android.support.v7.widget.RecyclerView
-		android:id="@+id/fsItemsList"
+		android:id="@+id/vacanciesList"
 		android:layout_width="0dp"
 		android:layout_height="0dp"
 		android:layout_marginRight="0dp"

@@ -3,11 +3,11 @@ package ru.ilapin.hhminiclient;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import ru.ilapin.hhminiclient.vacanciesrepository.VacanciesRepository;
+import ru.ilapin.hhminiclient.backend.BackendModule;
 
 @Singleton
-@Component(modules = {SystemModule.class})
+@Component(modules = {SystemModule.class, BackendModule.class})
 public interface ApplicationComponent {
 
-	void inject(VacanciesRepository repository);
+	void inject(MainActivity activity);
 }
