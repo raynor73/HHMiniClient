@@ -9,5 +9,5 @@ import ru.ilapin.hhminiclient.backend.BackendModule;
 @Component(modules = {SystemModule.class, BackendModule.class})
 public interface ApplicationComponent {
 
-	void inject(MainActivity activity);
+	void inject(VacanciesListFragment fragment);
 }

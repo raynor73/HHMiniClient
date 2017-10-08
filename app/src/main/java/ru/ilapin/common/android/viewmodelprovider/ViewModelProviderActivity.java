@@ -3,6 +3,7 @@ package ru.ilapin.common.android.viewmodelprovider;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+
 import io.reactivex.Observable;
 
 public class ViewModelProviderActivity extends AppCompatActivity {
@@ -35,11 +36,11 @@ public class ViewModelProviderActivity extends AppCompatActivity {
 		}
 	}
 
-	protected void putViewModel(final ViewModel viewModel) {
+	public void putViewModel(final ViewModel viewModel) {
 		mRetainedFragment.putViewModel(viewModel);
 	}
 
-	protected <T extends ViewModel> T findVideModel(final Class<T> type) {
+	public <T extends ViewModel> T findVideModel(final Class<T> type) {
 		return mRetainedFragment.findViewModel(type);
 	}
 }
