@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import ru.ilapin.common.android.viewmodelprovider.ViewModelProviderActivity;
 import ru.ilapin.hhminiclient.backend.Backend;
@@ -54,6 +55,8 @@ public class MainActivity extends ViewModelProviderActivity implements SwipeRefr
 	Button mSearchButton;
 	@BindView(R.id.swipeToRefresh)
 	SwipeRefreshLayout mSwipeRefreshLayout;
+	@BindView(R.id.emptyListMessage)
+	TextView mEmptyListMessageTextView;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -115,9 +118,27 @@ public class MainActivity extends ViewModelProviderActivity implements SwipeRefr
 	}
 
 	private void makeSubscriptions() {
-		mConnectionSubscription = mNetworkConnectionModel.getConnectionObservable().subscribe(isConnected -> {
-
+		mConnectionSubscription = Observable.combineLatest(
+				mNetworkConnectionModel.getConnectionObservable(),
+				mBackend.getVacanciesObservable().map(vacancies -> vacancies.getData().size()),
+				(isConnected, numberOfVacancies) -> {
+					if (numberOfVacancies > 0) {
+						return "";
+					} else if (isConnected) {
+						return getString(R.string.no_vacancies);
+					} else {
+						return getString(R.string.no_network);
+					}
+				}
+		).subscribe(message -> {
+			mEmptyListMessageTextView.setText(message);
+			if (!TextUtils.isEmpty(message)) {
+				mEmptyListMessageTextView.setVisibility(View.VISIBLE);
+			} else {
+				mEmptyListMessageTextView.setVisibility(View.GONE);
+			}
 		});
+
 		mVacanciesSubscription = mBackend.getVacanciesObservable().subscribe(result -> {
 			if (!result.hasError()) {
 				mVacanciesListAdapter.setVacanciesList(result.getData());
@@ -145,6 +166,7 @@ public class MainActivity extends ViewModelProviderActivity implements SwipeRefr
 	private void disposeSubscriptions() {
 		mConnectionSubscription.dispose();
 		mVacanciesSubscription.dispose();
+		mIdleSubscription.dispose();
 	}
 
 	private void onVacancyClicked(final BackendVacancy vacancy) {

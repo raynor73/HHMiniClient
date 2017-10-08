@@ -4,4 +4,6 @@
     <string name="clear">Clear</string>
     <string name="n_a">N/A</string>
     <string name="error_empty">Empty</string>
+    <string name="no_vacancies">No Vacancies Found</string>
+    <string name="no_network">No Network</string>
 </resources>
