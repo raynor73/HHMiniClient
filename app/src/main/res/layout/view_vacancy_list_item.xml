@@ -7,18 +7,19 @@
     android:layout_width="match_parent"
     android:layout_height="128dp">
 
-
     <TextView
         android:id="@+id/vacancyNameTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
-        android:text="Vacancy Name"
-        android:maxLines="1"
         android:ellipsize="middle"
+        android:maxLines="1"
+        android:text="Vacancy Name"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="HardcodedText,RtlHardcoded"/>
 
@@ -36,13 +37,15 @@
 
     <TextView
         android:id="@+id/employerTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         android:text="Employer Name"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/salaryTextView"
         tools:ignore="HardcodedText,RtlHardcoded"/>
 

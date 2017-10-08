@@ -1,6 +1,7 @@
 package ru.ilapin.hhminiclient;
 
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -28,7 +29,7 @@ import ru.ilapin.hhminiclient.backend.Backend;
 import ru.ilapin.hhminiclient.backend.BackendVacancy;
 import ru.ilapin.hhminiclient.networkconnection.NetworkConnectionModel;
 
-public class MainActivity extends ViewModelProviderActivity {
+public class MainActivity extends ViewModelProviderActivity implements SwipeRefreshLayout.OnRefreshListener {
 
 	@Inject
 	Backend mBackend;
@@ -51,6 +52,8 @@ public class MainActivity extends ViewModelProviderActivity {
 	Button mClearButton;
 	@BindView(R.id.searchButton)
 	Button mSearchButton;
+	@BindView(R.id.swipeToRefresh)
+	SwipeRefreshLayout mSwipeRefreshLayout;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -69,6 +72,8 @@ public class MainActivity extends ViewModelProviderActivity {
 		mVacanciesListAdapter = new VacanciesListAdapter();
 		mVacanciesListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 		mVacanciesListRecyclerView.setAdapter(mVacanciesListAdapter);
+
+		mSwipeRefreshLayout.setOnRefreshListener(this);
 	}
 
 	@Override
@@ -87,17 +92,26 @@ public class MainActivity extends ViewModelProviderActivity {
 
 	@OnClick(R.id.searchButton)
 	void onSearchButtonClicked() {
-		final Editable editableText = mKeywordsEditText.getText();
-		if (editableText == null || TextUtils.isEmpty(editableText.toString())) {
-			mKeywordsEditText.setError(getString(R.string.error_empty));
-		} else {
-			mBackend.searchVacancies(editableText.toString());
-		}
+		doSearch();
 	}
 
 	@OnClick(R.id.clearButton)
 	void onClearButtonClicked() {
 		mKeywordsEditText.setText(null);
+	}
+
+	@Override
+	public void onRefresh() {
+		doSearch();
+	}
+
+	private void doSearch() {
+		final Editable editableText = mKeywordsEditText.getText();
+		if (editableText == null || TextUtils.isEmpty(editableText.toString())) {
+			mBackend.searchVacancies("");
+		} else {
+			mBackend.searchVacancies(editableText.toString());
+		}
 	}
 
 	private void makeSubscriptions() {
@@ -116,12 +130,14 @@ public class MainActivity extends ViewModelProviderActivity {
 				mKeywordsEditText.setEnabled(true);
 				mClearButton.setEnabled(true);
 				mSearchButton.setEnabled(true);
+				mSwipeRefreshLayout.setRefreshing(false);
 			} else {
 				mVacanciesListRecyclerView.setEnabled(false);
 				mProgressBar.setVisibility(View.VISIBLE);
 				mKeywordsEditText.setEnabled(false);
 				mClearButton.setEnabled(false);
 				mSearchButton.setEnabled(false);
+				mSwipeRefreshLayout.setRefreshing(true);
 			}
 		});
 	}
