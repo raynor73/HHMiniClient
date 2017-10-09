@@ -2,10 +2,7 @@ package ru.ilapin.hhminiclient.backend;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Headers;
-import retrofit2.http.Path;
-import retrofit2.http.Query;
+import retrofit2.http.*;
 
 interface HHService {
 
@@ -14,6 +11,6 @@ interface HHService {
 	Call<ResponseBody> vacancies(@Query("text") String text);
 
 	@Headers("User-Agent: HHMiniClient/1.0 (igor.lapin73@gmail.com)")
-	@GET("GET /vacancies/{vacancyId}")
+	@GET("vacancies/{vacancyId}")
 	Call<ResponseBody> vacancy(@Path("vacancyId") int vacancyId);
 }

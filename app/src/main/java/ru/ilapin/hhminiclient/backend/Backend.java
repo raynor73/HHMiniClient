@@ -1,25 +1,19 @@
 package ru.ilapin.hhminiclient.backend;
 
 import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import okhttp3.ResponseBody;
+import org.json.*;
 import retrofit2.Retrofit;
 import ru.ilapin.common.android.busymodel.BusyModel;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class Backend extends BusyModel {
 
@@ -40,6 +34,10 @@ public class Backend extends BusyModel {
 
 	public Observable<Result<List<BackendVacancy>>> getVacanciesObservable() {
 		return mVacanciesSubject;
+	}
+
+	public Observable<Result<BackendVacancy>> getVacancyObservable() {
+		return mVacancyDetailsSubject;
 	}
 
 	public void searchVacancies(final String keywords) {
@@ -79,6 +77,10 @@ public class Backend extends BusyModel {
 	}
 
 	private BackendVacancy makeVacancyRequest(final int id) throws IOException, JSONException {
+		if (id < 0) {
+			return null;
+		}
+
 		final ResponseBody vacancyResponseBody = mHHService.vacancy(id).execute().body();
 
 		if (vacancyResponseBody != null) {

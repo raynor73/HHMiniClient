@@ -9,22 +9,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import android.view.*;
+import android.widget.*;
+import butterknife.*;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import ru.ilapin.common.android.viewmodelprovider.ViewModelProviderActivity;
@@ -32,12 +19,16 @@ import ru.ilapin.hhminiclient.backend.Backend;
 import ru.ilapin.hhminiclient.backend.BackendVacancy;
 import ru.ilapin.hhminiclient.networkconnection.NetworkConnectionModel;
 
+import javax.inject.Inject;
+import java.util.*;
+
 public class VacanciesListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
 	@Inject
 	Backend mBackend;
 
 	private ViewModelProviderActivity mViewModelProvider;
+	private Listener mListener;
 
 	private NetworkConnectionModel mNetworkConnectionModel;
 
@@ -65,6 +56,7 @@ public class VacanciesListFragment extends Fragment implements SwipeRefreshLayou
 		super.onAttach(context);
 
 		mViewModelProvider = (ViewModelProviderActivity) context;
+		mListener = (Listener) context;
 	}
 
 	@Nullable
@@ -179,7 +171,7 @@ public class VacanciesListFragment extends Fragment implements SwipeRefreshLayou
 	}
 
 	private void onVacancyClicked(final BackendVacancy vacancy) {
-
+		mListener.onVacancyIdSelected(vacancy.getId());
 	}
 
 	public class VacanciesListAdapter extends RecyclerView.Adapter<VacanciesListAdapter.ViewHolder> {
@@ -262,5 +254,10 @@ public class VacanciesListFragment extends Fragment implements SwipeRefreshLayou
 				itemView.setOnClickListener(view -> onVacancyClicked(mVacanciesList.get(getAdapterPosition())));
 			}
 		}
+	}
+
+	public interface Listener {
+
+		void onVacancyIdSelected(int id);
 	}
 }

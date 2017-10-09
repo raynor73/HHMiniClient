@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
@@ -22,7 +23,11 @@ public class NetworkConnectionModel implements ViewModel {
 
 		mContext = context;
 		mReceiver = new NetworkConnectionReceiver(this);
-		mConnectionObservable.onNext(false);
+
+		final ConnectivityManager connectivityManager =
+				(ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+		final NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+		mConnectionObservable.onNext(networkInfo != null && networkInfo.isConnected());
 
 		mContext.registerReceiver(mReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 	}
