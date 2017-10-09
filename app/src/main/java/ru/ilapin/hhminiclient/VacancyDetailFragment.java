@@ -152,7 +152,7 @@ public class VacancyDetailFragment extends Fragment {
 		mVacancySubscription = mBackend.getVacancyObservable().subscribe(result -> {
 			if (!result.hasError()) {
 				final java.text.DateFormat mDateFormat = android.text.format.DateFormat.getDateFormat(getContext());
-				final BackendVacancy vacancy = result.getData();
+				final Vacancy vacancy = result.getData();
 				if (vacancy != null) {
 					mVacancyNameTextView.setText(vacancy.getName());
 					mAreaTextView.setText(vacancy.getAreaName());
@@ -208,10 +208,10 @@ public class VacancyDetailFragment extends Fragment {
 	private class StateDescriptor {
 
 		private final boolean mIsConnected;
-		private final Result<BackendVacancy> mVacancyResult;
+		private final Result<Vacancy> mVacancyResult;
 		private final boolean mIsIdle;
 
-		public StateDescriptor(final boolean isConnected, final Result<BackendVacancy> vacancyResult,
+		public StateDescriptor(final boolean isConnected, final Result<Vacancy> vacancyResult,
 				final boolean isIdle) {
 			mIsConnected = isConnected;
 			mVacancyResult = vacancyResult;
@@ -222,7 +222,7 @@ public class VacancyDetailFragment extends Fragment {
 			return mIsConnected;
 		}
 
-		public Result<BackendVacancy> getVacancyResult() {
+		public Result<Vacancy> getVacancyResult() {
 			return mVacancyResult;
 		}
 

@@ -17,7 +17,7 @@ import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import ru.ilapin.common.android.viewmodelprovider.ViewModelProviderActivity;
 import ru.ilapin.hhminiclient.backend.Backend;
-import ru.ilapin.hhminiclient.backend.BackendVacancy;
+import ru.ilapin.hhminiclient.backend.Vacancy;
 import ru.ilapin.hhminiclient.networkconnection.NetworkConnectionModel;
 
 import javax.inject.Inject;
@@ -181,13 +181,13 @@ public class VacanciesListFragment extends Fragment implements SwipeRefreshLayou
 		mIdleSubscription.dispose();
 	}
 
-	private void onVacancyClicked(final BackendVacancy vacancy) {
+	private void onVacancyClicked(final Vacancy vacancy) {
 		mListener.onVacancyIdSelected(vacancy.getId());
 	}
 
 	public class VacanciesListAdapter extends RecyclerView.Adapter<VacanciesListAdapter.ViewHolder> {
 
-		private final List<BackendVacancy> mVacanciesList = new ArrayList<>();
+		private final List<Vacancy> mVacanciesList = new ArrayList<>();
 		private final LayoutInflater mInflater = LayoutInflater.from(getContext());
 		private final java.text.DateFormat mDateFormat =
 				android.text.format.DateFormat.getDateFormat(getContext());
@@ -199,7 +199,7 @@ public class VacanciesListFragment extends Fragment implements SwipeRefreshLayou
 
 		@Override
 		public void onBindViewHolder(final ViewHolder holder, final int position) {
-			final BackendVacancy vacancy = mVacanciesList.get(position);
+			final Vacancy vacancy = mVacanciesList.get(position);
 
 			holder.vacancyNameTextView.setText(vacancy.getName());
 			holder.areaTextView.setText(vacancy.getAreaName());
@@ -239,7 +239,7 @@ public class VacanciesListFragment extends Fragment implements SwipeRefreshLayou
 			return mVacanciesList.size();
 		}
 
-		public void setVacanciesList(final List<BackendVacancy> vacanciesList) {
+		public void setVacanciesList(final List<Vacancy> vacanciesList) {
 			mVacanciesList.clear();
 			mVacanciesList.addAll(vacanciesList);
 			notifyDataSetChanged();

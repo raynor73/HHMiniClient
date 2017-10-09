@@ -28,8 +28,8 @@ public class Backend extends BusyModel {
 	private static final String VACANCY_RESPONSE_KEY = "Backend.VACANCY_RESPONSE";
 
 	private final HHService mHHService;
-	private final BehaviorSubject<Result<List<BackendVacancy>>> mVacanciesSubject = BehaviorSubject.create();
-	private final BehaviorSubject<Result<BackendVacancy>> mVacancyDetailsSubject = BehaviorSubject.create();
+	private final BehaviorSubject<Result<List<Vacancy>>> mVacanciesSubject = BehaviorSubject.create();
+	private final BehaviorSubject<Result<Vacancy>> mVacancyDetailsSubject = BehaviorSubject.create();
 
 	private final SharedPreferences mSharedPreferences;
 
@@ -43,11 +43,11 @@ public class Backend extends BusyModel {
 		mVacancyDetailsSubject.onNext(new Result<>(null, false));
 	}
 
-	public Observable<Result<List<BackendVacancy>>> getVacanciesObservable() {
+	public Observable<Result<List<Vacancy>>> getVacanciesObservable() {
 		return mVacanciesSubject;
 	}
 
-	public Observable<Result<BackendVacancy>> getVacancyObservable() {
+	public Observable<Result<Vacancy>> getVacancyObservable() {
 		return mVacancyDetailsSubject;
 	}
 
@@ -66,7 +66,7 @@ public class Backend extends BusyModel {
 						if (mSharedPreferences.contains(SEARCH_KEYWORDS_KEY) && mSharedPreferences.getString(SEARCH_KEYWORDS_KEY, "").equals(keywords)) {
 							return new Result<>(parseVacancies(mSharedPreferences.getString(SEARCH_RESPONSE_KEY, "")), false);
 						} else {
-							return new Result<List<BackendVacancy>>(new ArrayList<>(), true);
+							return new Result<List<Vacancy>>(new ArrayList<>(), true);
 						}
 					} else {
 						final String responseString = result.getData().string();
@@ -103,7 +103,7 @@ public class Backend extends BusyModel {
 						if (mSharedPreferences.contains(VACANCY_ID_KEY) && mSharedPreferences.getInt(VACANCY_ID_KEY, -1) == id) {
 							return new Result<>(parseVacancyDetails(mSharedPreferences.getString(VACANCY_RESPONSE_KEY, "")), false);
 						} else {
-							return new Result<BackendVacancy>(null, true);
+							return new Result<Vacancy>(null, true);
 						}
 					} else {
 						final String responseString = result.getData().string();
@@ -125,11 +125,11 @@ public class Backend extends BusyModel {
 				});
 	}
 
-	private BackendVacancy parseVacancyDetails(final String responseString) throws JSONException {
+	private Vacancy parseVacancyDetails(final String responseString) throws JSONException {
 		final JSONObject vacancyJsonObject = new JSONObject(responseString);
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
 
-		final BackendVacancy vacancy = new BackendVacancy();
+		final Vacancy vacancy = new Vacancy();
 		try {
 			vacancy.setId(vacancyJsonObject.getInt("id"));
 			vacancy.setName(vacancyJsonObject.getString("name"));
@@ -150,8 +150,8 @@ public class Backend extends BusyModel {
 		return vacancy;
 	}
 
-	private List<BackendVacancy> parseVacancies(final String responseString) throws JSONException {
-		final List<BackendVacancy> vacancies = new ArrayList<>();
+	private List<Vacancy> parseVacancies(final String responseString) throws JSONException {
+		final List<Vacancy> vacancies = new ArrayList<>();
 
 		final JSONObject vacanciesJsonObject = new JSONObject(responseString);
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
@@ -159,7 +159,7 @@ public class Backend extends BusyModel {
 		for (int i = 0; i < vacanciesJsonArray.length(); i++) {
 			final JSONObject vacancyJsonObject = vacanciesJsonArray.getJSONObject(i);
 
-			final BackendVacancy vacancy = new BackendVacancy();
+			final Vacancy vacancy = new Vacancy();
 			try {
 				vacancy.setId(vacancyJsonObject.getInt("id"));
 				vacancy.setName(vacancyJsonObject.getString("name"));

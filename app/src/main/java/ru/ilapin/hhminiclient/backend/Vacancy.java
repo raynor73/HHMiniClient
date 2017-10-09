@@ -2,7 +2,7 @@ package ru.ilapin.hhminiclient.backend;
 
 import java.util.Date;
 
-public class BackendVacancy {
+public class Vacancy {
 
 	private int mId;
 	private String mName;
