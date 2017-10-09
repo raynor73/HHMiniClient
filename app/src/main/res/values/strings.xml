@@ -1,12 +1,12 @@
 <resources>
 	<string name="app_name">HH Mini Client</string>
-    <string name="search">Search</string>
-    <string name="clear">Clear</string>
-    <string name="n_a">N/A</string>
-    <string name="error_empty">Empty</string>
-    <string name="no_vacancies">No Vacancies Found</string>
-    <string name="no_network">No Network</string>
-    <string name="area">Area:</string>
+	<string name="search">Search</string>
+	<string name="clear">Clear</string>
+	<string name="n_a">N/A</string>
+	<string name="error_empty">Empty</string>
+	<string name="no_vacancies">No Vacancies Found</string>
+	<string name="no_network">No Network</string>
+	<string name="area">Area:</string>
 	<string name="choose_vacancy">Please choose vacancy</string>
 	<string name="vacancy_not_found">Vacancy not found</string>
 </resources>

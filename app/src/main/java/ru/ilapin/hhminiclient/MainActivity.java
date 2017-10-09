@@ -12,6 +12,8 @@ import ru.ilapin.common.android.viewmodelprovider.ViewModelProviderActivity;
 
 public class MainActivity extends ViewModelProviderActivity implements VacanciesListFragment.Listener {
 
+	private static final String SELECTED_VACANCY_ID_KEY = "SELECTED_VACANCY_ID";
+
 	@Nullable
 	@BindView(R.id.detailsLayout)
 	ViewGroup mDetailsViewGroup;
@@ -19,6 +21,8 @@ public class MainActivity extends ViewModelProviderActivity implements Vacancies
 	@Nullable
 	@BindView(R.id.chooseVacancy)
 	TextView mChooseVacancyTextView;
+
+	private int mSelectedVacancyId = -1;
 
 	@Override
 	protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -28,10 +32,17 @@ public class MainActivity extends ViewModelProviderActivity implements Vacancies
 		ButterKnife.bind(this);
 
 		if (savedInstanceState == null) {
+			getSupportFragmentManager()
+					.beginTransaction()
+					.replace(R.id.container, new VacanciesListFragment())
+					.commit();
+		} else if (mDetailsViewGroup != null) {
+			final int vacancyId = savedInstanceState.getInt(SELECTED_VACANCY_ID_KEY, -1);
+
 			final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-			transaction.replace(R.id.listContainer, new VacanciesListFragment());
-			if (mDetailsViewGroup != null) {
-				transaction.replace(R.id.detailsLayout, VacancyDetailFragment.newInstance(-1));
+			transaction.replace(R.id.container, new VacanciesListFragment());
+			if (vacancyId >= 0) {
+				transaction.replace(R.id.detailsLayout, VacancyDetailFragment.newInstance(vacancyId));
 			}
 			transaction.commit();
 		}
@@ -52,12 +63,13 @@ public class MainActivity extends ViewModelProviderActivity implements Vacancies
 
 	@Override
 	public void onVacancyIdSelected(final int id) {
-		final FragmentTransaction transaction = getSupportFragmentManager()
-				.beginTransaction();
+		mSelectedVacancyId = id;
+
+		final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		if (mDetailsViewGroup == null) {
 			transaction
 					.addToBackStack(null)
-					.replace(R.id.listContainer, VacancyDetailFragment.newInstance(id));
+					.replace(R.id.container, VacancyDetailFragment.newInstance(id));
 		} else {
 			if (mChooseVacancyTextView != null) {
 				mChooseVacancyTextView.setVisibility(View.GONE);
@@ -65,5 +77,12 @@ public class MainActivity extends ViewModelProviderActivity implements Vacancies
 			transaction.replace(R.id.detailsLayout, VacancyDetailFragment.newInstance(id));
 		}
 		transaction.commit();
+	}
+
+	@Override
+	protected void onSaveInstanceState(final Bundle outState) {
+		super.onSaveInstanceState(outState);
+
+		outState.putInt(SELECTED_VACANCY_ID_KEY, mSelectedVacancyId);
 	}
 }
