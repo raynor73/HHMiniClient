@@ -1,6 +1,7 @@
 package ru.ilapin.hhminiclient;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -24,8 +25,12 @@ import java.util.*;
 
 public class VacanciesListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
+	private static final String SEARCH_KEYWORDS_KEY = "VacanciesListFragment.SEARCH_KEYWORDS";
+
 	@Inject
 	Backend mBackend;
+	@Inject
+	SharedPreferences mSharedPreferences;
 
 	private ViewModelProviderActivity mViewModelProvider;
 	private Listener mListener;
@@ -79,6 +84,12 @@ public class VacanciesListFragment extends Fragment implements SwipeRefreshLayou
 
 		mSwipeRefreshLayout.setOnRefreshListener(this);
 
+		if (savedInstanceState == null) {
+			final String keywords = mSharedPreferences.getString(SEARCH_KEYWORDS_KEY, "");
+			mKeywordsEditText.setText(keywords);
+			mBackend.searchVacancies(keywords);
+		}
+
 		return rootView;
 	}
 
@@ -113,11 +124,14 @@ public class VacanciesListFragment extends Fragment implements SwipeRefreshLayou
 
 	private void doSearch() {
 		final Editable editableText = mKeywordsEditText.getText();
+		final String keywords;
 		if (editableText == null || TextUtils.isEmpty(editableText.toString())) {
-			mBackend.searchVacancies("");
+			keywords = "";
 		} else {
-			mBackend.searchVacancies(editableText.toString());
+			keywords = editableText.toString();
 		}
+		mBackend.searchVacancies(keywords);
+		mSharedPreferences.edit().putString(SEARCH_KEYWORDS_KEY, keywords).apply();
 	}
 
 	private void makeSubscriptions() {
@@ -142,11 +156,8 @@ public class VacanciesListFragment extends Fragment implements SwipeRefreshLayou
 			}
 		});
 
-		mVacanciesSubscription = mBackend.getVacanciesObservable().subscribe(result -> {
-			if (!result.hasError()) {
-				mVacanciesListAdapter.setVacanciesList(result.getData());
-			}
-		});
+		mVacanciesSubscription = mBackend.getVacanciesObservable().subscribe(result -> mVacanciesListAdapter.setVacanciesList(result.getData()));
+
 		mIdleSubscription = mBackend.getIdleObservable().subscribe(isIdle -> {
 			if (isIdle) {
 				mVacanciesListRecyclerView.setEnabled(true);

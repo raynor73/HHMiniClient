@@ -22,10 +22,10 @@ public class Backend extends BusyModel {
 
 	private static final String BASE_URL = "https://api.hh.ru/";
 
-	private static final String SEARCH_KEYWORDS_KEY = "SEARCH_KEYWORDS";
-	private static final String SEARCH_RESPONSE_KEY = "SEARCH_RESPONSE";
-	private static final String VACANCY_ID_KEY = "VACANCY_ID";
-	private static final String VACANCY_RESPONSE_KEY = "VACANCY_RESPONSE";
+	private static final String SEARCH_KEYWORDS_KEY = "Backend.SEARCH_KEYWORDS";
+	private static final String SEARCH_RESPONSE_KEY = "Backend.SEARCH_RESPONSE";
+	private static final String VACANCY_ID_KEY = "Backend.VACANCY_ID";
+	private static final String VACANCY_RESPONSE_KEY = "Backend.VACANCY_RESPONSE";
 
 	private final HHService mHHService;
 	private final BehaviorSubject<Result<List<BackendVacancy>>> mVacanciesSubject = BehaviorSubject.create();
