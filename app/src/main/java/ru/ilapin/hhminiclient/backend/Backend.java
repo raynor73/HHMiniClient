@@ -71,6 +71,8 @@ public class Backend extends BusyModel {
 					} else {
 						final String responseString = result.getData().string();
 
+						// For production it may be useful to store only last response in preferences while others
+						// in LRU cache.
 						final SharedPreferences.Editor editor = mSharedPreferences.edit();
 						editor.putString(SEARCH_KEYWORDS_KEY, keywords);
 						editor.putString(SEARCH_RESPONSE_KEY, responseString);

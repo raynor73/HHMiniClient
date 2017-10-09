@@ -1,8 +1,10 @@
 package ru.ilapin.hhminiclient;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.view.*;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -30,7 +32,6 @@ public class VacancyDetailFragment extends Fragment {
 
 	private Disposable mConnectionSubscription;
 	private Disposable mVacancySubscription;
-	//private Disposable mIdleSubscription;
 
 	@BindView(R.id.vacancyName)
 	TextView mVacancyNameTextView;
@@ -156,7 +157,11 @@ public class VacancyDetailFragment extends Fragment {
 				if (vacancy != null) {
 					mVacancyNameTextView.setText(vacancy.getName());
 					mAreaTextView.setText(vacancy.getAreaName());
-					mDetailsTextView.setText(vacancy.getDescription());
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+						mDetailsTextView.setText(Html.fromHtml(vacancy.getDescription(), Html.FROM_HTML_MODE_COMPACT));
+					} else {
+						mDetailsTextView.setText(Html.fromHtml(vacancy.getDescription()));
+					}
 
 					final String salary;
 					if (vacancy.getSalaryFrom() > 0 && vacancy.getSalaryTo() > 0) {
@@ -189,20 +194,11 @@ public class VacancyDetailFragment extends Fragment {
 				}
 			}
 		});
-
-		/*mIdleSubscription = mBackend.getIdleObservable().subscribe(isIdle -> {
-			if (isIdle) {
-				mProgressBar.setVisibility(View.GONE);
-			} else {
-				mProgressBar.setVisibility(View.VISIBLE);
-			}
-		});*/
 	}
 
 	private void disposeSubscriptions() {
 		mConnectionSubscription.dispose();
 		mVacancySubscription.dispose();
-		//mIdleSubscription.dispose();
 	}
 
 	private class StateDescriptor {
