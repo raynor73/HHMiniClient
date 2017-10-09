@@ -3,7 +3,6 @@ package ru.ilapin.hhminiclient;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.*;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -12,8 +11,7 @@ import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import ru.ilapin.common.android.viewmodelprovider.ViewModelProviderActivity;
-import ru.ilapin.hhminiclient.backend.Backend;
-import ru.ilapin.hhminiclient.backend.BackendVacancy;
+import ru.ilapin.hhminiclient.backend.*;
 import ru.ilapin.hhminiclient.networkconnection.NetworkConnectionModel;
 
 import javax.inject.Inject;
@@ -32,7 +30,7 @@ public class VacancyDetailFragment extends Fragment {
 
 	private Disposable mConnectionSubscription;
 	private Disposable mVacancySubscription;
-	private Disposable mIdleSubscription;
+	//private Disposable mIdleSubscription;
 
 	@BindView(R.id.vacancyName)
 	TextView mVacancyNameTextView;
@@ -104,20 +102,13 @@ public class VacancyDetailFragment extends Fragment {
 		mConnectionSubscription = Observable.combineLatest(
 				mNetworkConnectionModel.getConnectionObservable(),
 				mBackend.getVacancyObservable(),
-				(isConnected, vacancy) -> {
-					if (vacancy.getData() != null) {
-						return "";
-					} else if (isConnected) {
-						return getString(R.string.choose_vacancy);
-					} else {
-						return getString(R.string.no_network);
-					}
-				}
-		).subscribe(message -> {
-			mEmptyMessageTextView.setText(message);
-			if (!TextUtils.isEmpty(message)) {
-				mEmptyMessageTextView.setVisibility(View.VISIBLE);
+				mBackend.getIdleObservable(),
+				StateDescriptor::new
+		).subscribe(stateDescriptor -> {
+			if (!stateDescriptor.isIdle()) {
+				mProgressBar.setVisibility(View.VISIBLE);
 
+				mEmptyMessageTextView.setVisibility(View.GONE);
 				mVacancyNameTextView.setVisibility(View.GONE);
 				mSalaryTextView.setVisibility(View.GONE);
 				mAreaLabelTextView.setVisibility(View.GONE);
@@ -125,14 +116,36 @@ public class VacancyDetailFragment extends Fragment {
 				mPublishedAtTextView.setVisibility(View.GONE);
 				mDetailsTextView.setVisibility(View.GONE);
 			} else {
-				mEmptyMessageTextView.setVisibility(View.GONE);
+				mProgressBar.setVisibility(View.GONE);
 
-				mVacancyNameTextView.setVisibility(View.VISIBLE);
-				mSalaryTextView.setVisibility(View.VISIBLE);
-				mAreaLabelTextView.setVisibility(View.VISIBLE);
-				mAreaTextView.setVisibility(View.VISIBLE);
-				mPublishedAtTextView.setVisibility(View.VISIBLE);
-				mDetailsTextView.setVisibility(View.VISIBLE);
+				if (stateDescriptor.getVacancyResult().getData() != null) {
+					mEmptyMessageTextView.setVisibility(View.GONE);
+					mEmptyMessageTextView.setText(null);
+
+					mVacancyNameTextView.setVisibility(View.VISIBLE);
+					mSalaryTextView.setVisibility(View.VISIBLE);
+					mAreaLabelTextView.setVisibility(View.VISIBLE);
+					mAreaTextView.setVisibility(View.VISIBLE);
+					mPublishedAtTextView.setVisibility(View.VISIBLE);
+					mDetailsTextView.setVisibility(View.VISIBLE);
+				} else {
+					mEmptyMessageTextView.setVisibility(View.VISIBLE);
+
+					final String message;
+					if (stateDescriptor.isConnected()) {
+						message = getString(R.string.vacancy_not_found);
+					} else {
+						message = getString(R.string.no_network);
+					}
+					mEmptyMessageTextView.setText(message);
+
+					mVacancyNameTextView.setVisibility(View.GONE);
+					mSalaryTextView.setVisibility(View.GONE);
+					mAreaLabelTextView.setVisibility(View.GONE);
+					mAreaTextView.setVisibility(View.GONE);
+					mPublishedAtTextView.setVisibility(View.GONE);
+					mDetailsTextView.setVisibility(View.GONE);
+				}
 			}
 		});
 
@@ -177,18 +190,44 @@ public class VacancyDetailFragment extends Fragment {
 			}
 		});
 
-		mIdleSubscription = mBackend.getIdleObservable().subscribe(isIdle -> {
+		/*mIdleSubscription = mBackend.getIdleObservable().subscribe(isIdle -> {
 			if (isIdle) {
 				mProgressBar.setVisibility(View.GONE);
 			} else {
 				mProgressBar.setVisibility(View.VISIBLE);
 			}
-		});
+		});*/
 	}
 
 	private void disposeSubscriptions() {
 		mConnectionSubscription.dispose();
 		mVacancySubscription.dispose();
-		mIdleSubscription.dispose();
+		//mIdleSubscription.dispose();
+	}
+
+	private class StateDescriptor {
+
+		private final boolean mIsConnected;
+		private final Result<BackendVacancy> mVacancyResult;
+		private final boolean mIsIdle;
+
+		public StateDescriptor(final boolean isConnected, final Result<BackendVacancy> vacancyResult,
+				final boolean isIdle) {
+			mIsConnected = isConnected;
+			mVacancyResult = vacancyResult;
+			mIsIdle = isIdle;
+		}
+
+		public boolean isConnected() {
+			return mIsConnected;
+		}
+
+		public Result<BackendVacancy> getVacancyResult() {
+			return mVacancyResult;
+		}
+
+		public boolean isIdle() {
+			return mIsIdle;
+		}
 	}
 }

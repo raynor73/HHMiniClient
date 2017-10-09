@@ -8,4 +8,5 @@
     <string name="no_network">No Network</string>
     <string name="area">Area:</string>
 	<string name="choose_vacancy">Please choose vacancy</string>
+	<string name="vacancy_not_found">Vacancy not found</string>
 </resources>
