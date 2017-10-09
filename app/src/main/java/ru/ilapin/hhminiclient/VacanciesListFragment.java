@@ -160,13 +160,13 @@ public class VacanciesListFragment extends Fragment implements SwipeRefreshLayou
 
 		mIdleSubscription = mBackend.getIdleObservable().subscribe(isIdle -> {
 			if (isIdle) {
-				mVacanciesListRecyclerView.setEnabled(true);
+				mVacanciesListAdapter.setClickable(true);
 				mKeywordsEditText.setEnabled(true);
 				mClearButton.setEnabled(true);
 				mSearchButton.setEnabled(true);
 				mSwipeRefreshLayout.setRefreshing(false);
 			} else {
-				mVacanciesListRecyclerView.setEnabled(false);
+				mVacanciesListAdapter.setClickable(false);
 				mKeywordsEditText.setEnabled(false);
 				mClearButton.setEnabled(false);
 				mSearchButton.setEnabled(false);
@@ -191,6 +191,8 @@ public class VacanciesListFragment extends Fragment implements SwipeRefreshLayou
 		private final LayoutInflater mInflater = LayoutInflater.from(getContext());
 		private final java.text.DateFormat mDateFormat =
 				android.text.format.DateFormat.getDateFormat(getContext());
+
+		private boolean mIsClickable;
 
 		@Override
 		public ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
@@ -245,6 +247,10 @@ public class VacanciesListFragment extends Fragment implements SwipeRefreshLayou
 			notifyDataSetChanged();
 		}
 
+		public void setClickable(final boolean clickable) {
+			mIsClickable = clickable;
+		}
+
 		public class ViewHolder extends RecyclerView.ViewHolder {
 
 			@BindView(R.id.vacancyNameTextView)
@@ -262,7 +268,11 @@ public class VacanciesListFragment extends Fragment implements SwipeRefreshLayou
 				super(itemView);
 				ButterKnife.bind(this, itemView);
 
-				itemView.setOnClickListener(view -> onVacancyClicked(mVacanciesList.get(getAdapterPosition())));
+				itemView.setOnClickListener(view -> {
+					if (mIsClickable) {
+						onVacancyClicked(mVacanciesList.get(getAdapterPosition()));
+					}
+				});
 			}
 		}
 	}
