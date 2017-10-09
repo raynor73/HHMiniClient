@@ -12,6 +12,7 @@ public class BackendVacancy {
 	private String mEmployerName;
 	private String mAreaName;
 	private Date mPublishedAt;
+	private String mDescription;
 
 	public int getId() {
 		return mId;
@@ -75,5 +76,13 @@ public class BackendVacancy {
 
 	public void setPublishedAt(final Date publishedAt) {
 		mPublishedAt = publishedAt;
+	}
+
+	public String getDescription() {
+		return mDescription;
+	}
+
+	public void setDescription(final String description) {
+		mDescription = description;
 	}
 }

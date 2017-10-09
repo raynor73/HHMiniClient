@@ -29,11 +29,13 @@ public class Backend extends BusyModel {
 
 	private final HHService mHHService;
 	private final BehaviorSubject<Result<List<BackendVacancy>>> mVacanciesSubject = BehaviorSubject.create();
+	private final BehaviorSubject<Result<BackendVacancy>> mVacancyDetailsSubject = BehaviorSubject.create();
 
 	public Backend() {
 		final Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).build();
 		mHHService = retrofit.create(HHService.class);
 		mVacanciesSubject.onNext(new Result<>(new ArrayList<>(), false));
+		mVacancyDetailsSubject.onNext(new Result<>(null, false));
 	}
 
 	public Observable<Result<List<BackendVacancy>>> getVacanciesObservable() {
@@ -56,6 +58,55 @@ public class Backend extends BusyModel {
 					mVacanciesSubject.onNext(result);
 					setIdle(true);
 				});
+	}
+
+	public void getVacancy(final int id) {
+		if (!isIdle()) {
+			Log.e(TAG, "Can't load vacancy while busy");
+			return;
+		}
+
+		setIdle(false);
+
+		Observable.<Result<BackendVacancy>>create(subscriber -> subscriber.onNext(new Result<>(makeVacancyRequest(id), false)))
+				.onErrorReturn(throwable -> new Result<>(null, true))
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(result -> {
+					mVacancyDetailsSubject.onNext(result);
+					setIdle(true);
+				});
+	}
+
+	private BackendVacancy makeVacancyRequest(final int id) throws IOException, JSONException {
+		final ResponseBody vacancyResponseBody = mHHService.vacancy(id).execute().body();
+
+		if (vacancyResponseBody != null) {
+			final JSONObject vacancyJsonObject = new JSONObject(vacancyResponseBody.string());
+			final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
+
+			final BackendVacancy vacancy = new BackendVacancy();
+			try {
+				vacancy.setId(vacancyJsonObject.getInt("id"));
+				vacancy.setName(vacancyJsonObject.getString("name"));
+				vacancy.setPublishedAt(dateFormat.parse(vacancyJsonObject.getString("published_at")));
+				vacancy.setEmployerName(vacancyJsonObject.getJSONObject("employer").getString("name"));
+				vacancy.setAreaName(vacancyJsonObject.getJSONObject("area").getString("name"));
+				vacancy.setDescription(vacancyJsonObject.getString("description"));
+
+				final JSONObject salaryJsonObject = vacancyJsonObject.getJSONObject("salary");
+				vacancy.setCurrency(salaryJsonObject.getString("currency"));
+				vacancy.setSalaryFrom(salaryJsonObject.optInt("from"));
+				vacancy.setSalaryTo(salaryJsonObject.optInt("to"));
+			} catch (final JSONException | ParseException e) {
+				Log.d(TAG, e.getMessage());
+				return null;
+			}
+
+			return vacancy;
+		}
+
+		return null;
 	}
 
 	private List<BackendVacancy> makeSearchVacanciesRequest(final String keywords) throws IOException, JSONException {

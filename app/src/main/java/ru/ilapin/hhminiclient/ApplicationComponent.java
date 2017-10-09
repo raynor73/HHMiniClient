@@ -10,4 +10,6 @@ import ru.ilapin.hhminiclient.backend.BackendModule;
 public interface ApplicationComponent {
 
 	void inject(VacanciesListFragment fragment);
+
+	void inject(VacancyDetailFragment fragment);
 }

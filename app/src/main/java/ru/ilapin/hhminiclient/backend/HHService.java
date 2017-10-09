@@ -15,5 +15,5 @@ interface HHService {
 
 	@Headers("User-Agent: HHMiniClient/1.0 (igor.lapin73@gmail.com)")
 	@GET("GET /vacancies/{vacancyId}")
-	Call<ResponseBody> vacancy(@Path("vacancyId") String vacancyId);
+	Call<ResponseBody> vacancy(@Path("vacancyId") int vacancyId);
 }
